@@ -1,0 +1,9 @@
+---
+- name: duplicity
+  hosts: all
+  user: root
+  become: true
+  roles:
+  - duplicity
+  vars_files:
+  - vars/versions.yml

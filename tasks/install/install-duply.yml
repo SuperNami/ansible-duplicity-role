@@ -1,0 +1,26 @@
+---
+- name: download duply archive
+  get_url: url=http://downloads.sourceforge.net/project/ftplicity/duply%20%28simple%20duplicity%29/{{ duply_series }}/{{ duply_archive }}?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fftplicity%2Ffiles%2Fduply%2520%2528simple%2520duplicity%2529%2F{{ duply_series }}%2F&ts=1475330309&use_mirror=freefr
+           dest={{ duplicity_download }}{{ duply_archive }}
+           force=no
+
+
+- name: extract duply archive to PATH entry
+  command: tar -zxvf {{ duply_archive }} chdir={{ duplicity_download }} creates={{ duplicity_download }}{{ duply_folder }}
+
+
+- name: copy duply binary
+  command: cp duply /bin/duply chdir={{ duplicity_download }}{{ duply_folder }} creates=/bin/duply
+
+
+- name: remove duply archive
+  file: path={{ duplicity_download }}{{ duply_archive }}
+        state=absent
+
+
+- name: change permissions duply binary
+  file: path=/bin/duply
+        state=file
+        owner=root
+        group=root
+        mode=0755

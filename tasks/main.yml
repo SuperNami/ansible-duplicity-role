@@ -1,0 +1,7 @@
+---
+- include: install/install-duplicity.yml
+  tags: install_duplicity
+
+
+- include: install/install-duply.yml
+  tags: install_duply

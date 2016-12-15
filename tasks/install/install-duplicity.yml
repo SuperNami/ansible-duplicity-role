@@ -1,0 +1,58 @@
+---
+- name: create duplicity and backup folders
+  file: path={{ item }}
+        state=directory
+
+  with_items:
+  - "{{ duplicity_download }}"
+  - "{{ duplicity_download }}scripts"
+
+
+- name: install duplicity package dependencies
+  apt: pkg={{ item }}
+       state=present
+       update_cache=yes
+
+  with_items:
+  - rsync
+  - ncftp
+  - lftp
+  - librsync-dev
+  - python-paramiko
+  - python-pycryptopp
+  - python-boto
+  - python-dev
+  - python-lockfile
+  - python-pip
+
+
+- name: install duplicity pip dependencies
+  pip: name={{ item }}
+       state=present
+
+  with_items:
+  - boto
+  - dropbox
+  - gdata
+  - pyrax
+  - mega.py
+
+
+- name: download duplicity archive
+  get_url: url=http://code.launchpad.net/duplicity/{{ duplicity_series }}/{{ duplicity_version }}/+download/{{ duplicity_archive }}
+           dest={{ duplicity_download }}{{ duplicity_archive }}
+           force=no
+
+
+- name: unpack duplicity archive
+  command: tar -xvpzf {{ duplicity_archive }} chdir={{ duplicity_download }} creates={{ duplicity_download }}{{ duplicity_folder }}
+
+
+- name: remove duplicity archive
+  file: path={{ duplicity_download }}{{ duplicity_archive }}
+        state=absent
+
+
+- name: install duplicity
+  command: python setup.py install chdir={{ duplicity_download }}{{ duplicity_folder }}
+
